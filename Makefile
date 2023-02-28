@@ -1,5 +1,5 @@
-NAME = so_long
-NAME_BONUS = so_long_bonus
+NAME = pipex
+NAME_BONUS = pipex_bonus
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
@@ -10,7 +10,7 @@ LIB = pipex.h
 #SRC_PATH = ./src/
 #SRC_PATH_BONUS = ./src_bonus/
 
-SRC =	
+SRC =	main.c
 
 #SRC_BONUS =	
 
