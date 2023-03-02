@@ -11,8 +11,10 @@ static int	find_path_pos(char **env)
 			return (i);
 		i++;
 	}
-	return (0); //printear errorr
+	return (0); //printear error
 }
+
+
 
 static int	find_path(char *cmd, char **env)
 {
