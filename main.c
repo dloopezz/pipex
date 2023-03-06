@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lopezz <lopezz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/06 19:29:04 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/06 21:33:42 by lopezz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void    pipex(char	*argv[], int file1, int file2, char *env[])
 	id = fork();
 	if (id < 0)
 		return ;
-	if (id == 0) //hijo
+	if (id == 0) //crea hijo 1
 	{
 		close(xtr[0]);
 		dup2(file1, STDIN_FILENO);
@@ -39,13 +39,21 @@ void    pipex(char	*argv[], int file1, int file2, char *env[])
 	}
 	else 
 	{
-		if 
 		close(xtr[1]);
-		dup2(xtr[0], STDIN_FILENO);
-		dup2(file2, STDOUT_FILENO);
-		exec_cmd(command2, env);
-		close(xtr[0]);
+		id = fork(); //crea hijo 2
+		if (id < 0)
+			return ;
+		if (id == 0)
+		{
+			close(xtr[0]);
+			dup2(xtr[0], STDIN_FILENO);
+			dup2(file2, STDOUT_FILENO);
+			exec_cmd(command2, env);
+		}
+		else
+			close(xtr[0]);
 	}
+
 	wait(&status);
 }
 
@@ -54,7 +62,7 @@ int main(int argc, char *argv[], char *env[])
 	int	file1;
 	int	file2;
 
-	if (argc > 0)
+	if (argc == 5)
 	{
 		file1 = open(argv[1], O_RDONLY | O_CREAT, 0666);
 		file2 = open(argv[4], O_RDWR | O_CREAT | O_TRUNC, 0666);
