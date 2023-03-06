@@ -10,11 +10,12 @@ LIB = pipex.h
 #SRC_PATH = ./src/
 #SRC_PATH_BONUS = ./src_bonus/
 
-SRC =	main.c
+SRCS =	main.c\
+		path.c
 
 #SRC_BONUS =	
 
-SRCS = $(addprefix $(SRC_PATH), $(SRC))
+#SRCS = $(addprefix $(SRC_PATH), $(SRC))
 #SRCS_BONUS = $(addprefix $(SRC_PATH_BONUS), $(SRC_BONUS))
 
 OBJS = $(SRCS:.c=.o)
