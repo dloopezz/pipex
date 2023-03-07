@@ -1,5 +1,18 @@
 #include "pipex.h"
 
+static void free_mtx(char **mtx)
+{
+	int i;
+
+	i = 0;
+	while (mtx[i])
+	{
+		free(mtx[i]);
+		i++;
+	}
+	free(mtx);
+}
+
 static int	find_path_pos(char **env)
 {
 	int i;
@@ -11,8 +24,10 @@ static int	find_path_pos(char **env)
 			return (i);
 		i++;
 	}
+	exit(1);
 	return (0); //printear error
 }
+
 
 static char	*find_path(char *cmd, char **env)
 {
@@ -22,21 +37,23 @@ static char	*find_path(char *cmd, char **env)
 	int		pos;
 	int		i;
 
-	i = 0;
 	pos = find_path_pos(env);
 	all_paths = ft_split(env[pos] + 5,  ':');
+	i = 0;
 	while (all_paths[i])
 	{
 		path = ft_strjoin(all_paths[i], "/");
 		cmd_path = ft_strjoin(path, cmd);
-		printf("Comando: %s\n", cmd_path);
+		free(path);
+		//printf("Comando: %s\n", cmd_path);
 		if (access(cmd_path, X_OK) == 0)
 		{
-			//liberar matrix
+			free_mtx(all_paths);
 			return (cmd_path);
 		}
 		i++;
 	}
+	free_mtx(all_paths);
 	exit(0); //no se ha  encontrado
 }
 
