@@ -20,7 +20,7 @@ static int	find_path_pos(char **env)
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], "PATH=", 5))
+		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 			return (i);
 		i++;
 	}
@@ -45,8 +45,7 @@ static char	*find_path(char *cmd, char **env)
 		path = ft_strjoin(all_paths[i], "/");
 		cmd_path = ft_strjoin(path, cmd);
 		free(path);
-		//printf("Comando: %s\n", cmd_path);
-		if (access(cmd_path, X_OK) == 0)
+		if (access(cmd_path, F_OK) == 0)
 		{
 			free_mtx(all_paths);
 			return (cmd_path);
