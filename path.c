@@ -1,15 +1,19 @@
 #include "pipex.h"
 
+static int	error_found(char *str)
+{
+	// ft_putstr_fd("ERROR:\n", 2);
+	// ft_putstr_fd(str, 2);
+	return (1);
+}
+
 static void free_mtx(char **mtx)
 {
 	int i;
 
 	i = 0;
-	while (mtx[i])
-	{
+	while (mtx[i++])
 		free(mtx[i]);
-		i++;
-	}
 	free(mtx);
 }
 
@@ -18,50 +22,44 @@ static int	find_path_pos(char **env)
 	int i;
 
 	i = 0;
-	while (env[i])
+	while (env[i++])
 	{
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 			return (i);
-		i++;
 	}
-	exit(1);
-	return (0); //printear error
+	error_found("Unable to find PATH in environment");
+	return (1); //printear error
 }
-
 
 static char	*find_path(char *cmd, char **env)
 {
-	char	**all_paths;
+	char	**all_dir;
+	char	*slash_cmd;
 	char	*path;
-	char	*cmd_path;
 	int		pos;
 	int		i;
 
-	pos = find_path_pos(env);
-	all_paths = ft_split(env[pos] + 5,  ':');
 	i = 0;
-	while (all_paths[i])
+	pos = find_path_pos(env);
+	all_dir = ft_split(env[pos] + 5,  ':');
+	while (all_dir[i])
 	{
-		path = ft_strjoin(all_paths[i], "/");
-		cmd_path = ft_strjoin(path, cmd);
-		free(path);
-		if (access(cmd_path, F_OK) == 0)
+		slash_cmd = ft_strjoin("/", cmd);
+		path = ft_strjoin(all_dir[i], slash_cmd);
+		free(slash_cmd);
+		if (access(path, X_OK) == 0)
 		{
-			free_mtx(all_paths);
-			return (cmd_path);
+			free_mtx(all_dir);
+			return (path);
 		}
 		i++;
 	}
-	free_mtx(all_paths);
-	exit(0); //no se ha  encontrado
+	free_mtx(all_dir);
+	//ft_putstr_fd("Unable to find command", 2);
+	error_found("ni idea");
+	return (0)
 }
 
-static void	error_found(char *str)
-{
-	ft_putstr_fd("ERROR:\n", 2);
-	ft_putstr_fd(str, 2);
-	exit (EXIT_FAILURE);
-}
 
 void	exec_cmd(char *cmd, char **env)  //cmd es argv[2] y argv[3]
 {

@@ -23,7 +23,7 @@ OBJS = $(SRCS:.c=.o)
 
 all: make_libft $(NAME)
 
-bonus: make_libft $(NAME_BONUS)
+#bonus: make_libft $(NAME_BONUS)
 
 make_libft:
 	@make all -C ./libft
