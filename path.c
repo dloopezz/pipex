@@ -57,6 +57,13 @@ static char	*find_path(char *cmd, char **env)
 	exit(0); //no se ha  encontrado
 }
 
+static void	error_found(char *str)
+{
+	ft_putstr_fd("ERROR:\n", 2);
+	ft_putstr_fd(str, 2);
+	exit (EXIT_FAILURE);
+}
+
 void	exec_cmd(char *cmd, char **env)  //cmd es argv[2] y argv[3]
 {
 	char	**cmd_flags;
@@ -65,5 +72,5 @@ void	exec_cmd(char *cmd, char **env)  //cmd es argv[2] y argv[3]
 	cmd_flags = ft_split(cmd, ' ');
 	path = find_path(cmd_flags[0], env);
 	if (execve(path, cmd_flags, env) == -1)
-		exit(EXIT_FAILURE);
+		error_found("execve error");
 }
