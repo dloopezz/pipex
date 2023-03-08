@@ -1,13 +1,12 @@
 #include "pipex.h"
 
-static int	error_found(char *str)
+int	error_found(char *str)
 {
-	// ft_putstr_fd("ERROR:\n", 2);
-	// ft_putstr_fd(str, 2);
-	return (1);
+	ft_putstr_fd(str, 2);
+	exit (EXIT_FAILURE);
 }
 
-static void free_mtx(char **mtx)
+void free_mtx(char **mtx)
 {
 	int i;
 
@@ -17,7 +16,7 @@ static void free_mtx(char **mtx)
 	free(mtx);
 }
 
-static int	find_path_pos(char **env)
+int	find_path_pos(char **env)
 {
 	int i;
 
@@ -28,10 +27,10 @@ static int	find_path_pos(char **env)
 			return (i);
 	}
 	error_found("Unable to find PATH in environment");
-	return (1); //printear error
+	return (1);
 }
 
-static char	*find_path(char *cmd, char **env)
+char	*find_path(char *cmd, char **env)
 {
 	char	**all_dir;
 	char	*slash_cmd;
@@ -52,14 +51,13 @@ static char	*find_path(char *cmd, char **env)
 			free_mtx(all_dir);
 			return (path);
 		}
+		free(path);
 		i++;
 	}
 	free_mtx(all_dir);
-	//ft_putstr_fd("Unable to find command", 2);
-	error_found("ni idea");
-	return (0)
+	error_found("Unable to find command");
+	return (0);
 }
-
 
 void	exec_cmd(char *cmd, char **env)  //cmd es argv[2] y argv[3]
 {
