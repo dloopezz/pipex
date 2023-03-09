@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/08 19:13:40 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/09 18:57:22 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	last_son(int *xtr, char *argv[], char *env[])
 		exit(EXIT_FAILURE);
 	if (id == 0)
 	{
+		// exit(127);
 		file2 = open(argv[4], O_RDWR | O_CREAT | O_TRUNC, 0644);
 		if (file2 < 0)
 			exit(EXIT_FAILURE);
@@ -56,15 +57,38 @@ void	last_son(int *xtr, char *argv[], char *env[])
 		// close(xtr[0]);
 		dup2(file2, STDOUT_FILENO);
 		// close(file2);
-/* Executing the command2 with the enviroment. */
 		exec_cmd(command2, env);
 	}
 }
 
-/* pid_t data type stands for process identification and it is used to represent process ids. 
-Whenever, we want to declare a variable that is going to be deal with the process ids we can use pid_t data type.
-The type of pid_t data is a signed integer type (signed int or we can say int). */
-void	pipex(char	*argv[], char *env[])
+void	bonus_son(int argc, int *xtr, char *argv[], char *env[])
+{
+	pid_t	id;
+	int		file2;
+	char	*command2;
+	int		i;
+
+	i = 4;
+	while (i < argc - 3)
+	{
+		command2 = argv[i];
+		id = fork(); //crea hijo i
+		if (id < 0)
+			exit(EXIT_FAILURE);
+		if (id == 0)
+		{
+			dup2(xtr[0], STDIN_FILENO);
+			dup2(xtr[1], STDOUT_FILENO);
+			exec_cmd(command2, env);
+		}
+	}
+}
+
+/* pid_t data type stands for process identification and it is used to represent
+process ids.  Whenever, we want to declare a variable that is going to be deal 
+with the process ids we can use pid_t data type. The type of pid_t data is a 
+signed integer type (signed int or we can say int). */
+void	pipex(int argc, char *argv[], char *env[])
 {
 	int		xtr[2];
 	int		status;
@@ -73,7 +97,9 @@ void	pipex(char	*argv[], char *env[])
 	if (xtr < 0)
 		exit (EXIT_FAILURE);
 	first_son(xtr, argv, env);
+	bonus_son(argc, xtr, argv, env);
 	last_son(xtr, argv, env);
+	
 	close(xtr[0]);
 	close(xtr[1]);
 	waitpid(-1, &status, 0);
@@ -85,7 +111,7 @@ int	main(int argc, char *argv[], char *env[])
 	if (argc == 5)
 	{
 		//find_path_pos(env);
-		pipex(argv, env);
+		pipex(argc, argv, env);
 		return (0);
 	}
 	// system("leaks pipex");

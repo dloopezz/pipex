@@ -5,17 +5,17 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 DEBUG = -g -fsanitize=address
 LIBFT = ./libft/libft.a
-LIB = pipex.h
+LIB = src/pipex.h
 #LIB_BONUS = 
-#SRC_PATH = ./src/
+SRC_PATH = ./src/
 #SRC_PATH_BONUS = ./src_bonus/
 
-SRCS =	main.c\
+SRC =	main.c\
 		path.c
 
 #SRC_BONUS =	
 
-#SRCS = $(addprefix $(SRC_PATH), $(SRC))
+SRCS = $(addprefix $(SRC_PATH), $(SRC))
 #SRCS_BONUS = $(addprefix $(SRC_PATH_BONUS), $(SRC_BONUS))
 
 OBJS = $(SRCS:.c=.o)
@@ -29,7 +29,7 @@ make_libft:
 	@make all -C ./libft
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -I $(LIB) $(LIBFT) $(MLX) $(MLX_FLAGS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) -I $(LIB) $(LIBFT) $(MLX) $(MLX_FLAGS) -o $(NAME)
 
 clean:
 	@rm -f $(OBJS) $(OBJS_BONUS)
