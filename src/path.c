@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 12:57:17 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/09 19:27:49 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/10 15:28:09 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	error_found(char *str)
 {
 	ft_putstr_fd(str, STDERR_FILENO);
-	exit (EXIT_FAILURE);
+	exit (127);
 }
 
 void	free_mtx(char **mtx)

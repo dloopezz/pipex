@@ -6,11 +6,11 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/09 18:57:22 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/10 15:26:40 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	first_son(int *xtr, char *argv[], char *env[])
 {
@@ -36,7 +36,7 @@ void	first_son(int *xtr, char *argv[], char *env[])
 	}
 }
 
-void	last_son(int *xtr, char *argv[], char *env[])
+void	last_son(int argc, int *xtr, char *argv[], char *env[])
 {
 	pid_t	id;
 	int		file2;
@@ -49,7 +49,7 @@ void	last_son(int *xtr, char *argv[], char *env[])
 	if (id == 0)
 	{
 		// exit(127);
-		file2 = open(argv[4], O_RDWR | O_CREAT | O_TRUNC, 0644);
+		file2 = open(argv[argc - 1], O_RDWR | O_CREAT | O_TRUNC, 0644);
 		if (file2 < 0)
 			exit(EXIT_FAILURE);
 		close(xtr[1]);
@@ -64,12 +64,11 @@ void	last_son(int *xtr, char *argv[], char *env[])
 void	bonus_son(int argc, int *xtr, char *argv[], char *env[])
 {
 	pid_t	id;
-	int		file2;
-	char	*command2;
 	int		i;
+	char	*command2;
 
-	i = 4;
-	while (i < argc - 3)
+	i = 3;
+	while (i < argc - 2)
 	{
 		command2 = argv[i];
 		id = fork(); //crea hijo i
@@ -78,8 +77,10 @@ void	bonus_son(int argc, int *xtr, char *argv[], char *env[])
 		if (id == 0)
 		{
 			dup2(xtr[0], STDIN_FILENO);
+			close(xtr[0]);
 			dup2(xtr[1], STDOUT_FILENO);
-			exec_cmd(command2, env);
+			close(xtr[1]);
+			exec_cmd(argv[i], env);
 		}
 	}
 }
@@ -88,6 +89,7 @@ void	bonus_son(int argc, int *xtr, char *argv[], char *env[])
 process ids.  Whenever, we want to declare a variable that is going to be deal 
 with the process ids we can use pid_t data type. The type of pid_t data is a 
 signed integer type (signed int or we can say int). */
+
 void	pipex(int argc, char *argv[], char *env[])
 {
 	int		xtr[2];
@@ -98,7 +100,7 @@ void	pipex(int argc, char *argv[], char *env[])
 		exit (EXIT_FAILURE);
 	first_son(xtr, argv, env);
 	bonus_son(argc, xtr, argv, env);
-	last_son(xtr, argv, env);
+	last_son(argc, xtr, argv, env);
 	
 	close(xtr[0]);
 	close(xtr[1]);
@@ -108,9 +110,10 @@ void	pipex(int argc, char *argv[], char *env[])
 
 int	main(int argc, char *argv[], char *env[])
 {
-	if (argc == 5)
+	if (argc >= 5)
 	{
 		//find_path_pos(env);
+		// ft_putstr_fd("llega", 2);
 		pipex(argc, argv, env);
 		return (0);
 	}
