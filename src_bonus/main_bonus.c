@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/10 15:26:40 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/14 18:24:05 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ void	first_son(int *xtr, char *argv[], char *env[])
 			exit(EXIT_FAILURE);
 		close(xtr[0]);
 		dup2(xtr[1], STDOUT_FILENO);
-		// close(xtr[1]);
+		close(xtr[1]);
 		dup2(file1, STDIN_FILENO);
-		// close(file1);
+		close(file1);
 		exec_cmd(command1, env);
 	}
 }
@@ -54,32 +54,34 @@ void	last_son(int argc, int *xtr, char *argv[], char *env[])
 			exit(EXIT_FAILURE);
 		close(xtr[1]);
 		dup2(xtr[0], STDIN_FILENO);
-		// close(xtr[0]);
+		close(xtr[0]);
 		dup2(file2, STDOUT_FILENO);
-		// close(file2);
+		close(file2);
 		exec_cmd(command2, env);
 	}
 }
 
-void	bonus_son(int argc, int *xtr, char *argv[], char *env[])
+void	bonus_son(int argc, char *argv[], char *env[])
 {
 	pid_t	id;
+	int		xtr_b[2];
 	int		i;
 	char	*command2;
 
 	i = 3;
 	while (i < argc - 2)
 	{
+		pipe(xtr_b);
 		command2 = argv[i];
 		id = fork(); //crea hijo i
 		if (id < 0)
 			exit(EXIT_FAILURE);
 		if (id == 0)
 		{
-			dup2(xtr[0], STDIN_FILENO);
-			close(xtr[0]);
-			dup2(xtr[1], STDOUT_FILENO);
-			close(xtr[1]);
+			dup2(xtr_b[0], STDIN_FILENO);
+			close(xtr_b[0]);
+			dup2(xtr_b[1], STDOUT_FILENO);
+			close(xtr_b[1]);
 			exec_cmd(argv[i], env);
 		}
 	}
@@ -99,7 +101,7 @@ void	pipex(int argc, char *argv[], char *env[])
 	if (xtr < 0)
 		exit (EXIT_FAILURE);
 	first_son(xtr, argv, env);
-	bonus_son(argc, xtr, argv, env);
+	bonus_son(argc, argv, env);
 	last_son(argc, xtr, argv, env);
 	
 	close(xtr[0]);

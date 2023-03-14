@@ -9,6 +9,7 @@ LIB = src/pipex.h
 LIB_BONUS = src/pipe_bonus.h
 SRC_PATH = ./src/
 SRC_PATH_BONUS = ./src_bonus/
+OBJS_PATH = ./objs/
 
 SRC =	main.c\
 		path.c
@@ -30,19 +31,24 @@ make_libft:
 	@make all -C ./libft
 
 $(NAME): $(OBJS)
+	@mkdir -p $(OBJS_PATH)
 	@$(CC) $(CFLAGS) $(OBJS) -I $(LIB) $(LIBFT) -o $(NAME)
+	@mv $(OBJS) $(OBJS_PATH)
 
 $(NAME_BONUS): $(OBJS_BONUS)
-	$(CC) $(CFLAGS) $(OBJS_BONUS) -I $(LIB_BONUS) $(LIBFT) -o $(NAME_BONUS)
+	@$(CC) $(CFLAGS) $(OBJS_BONUS) -I $(LIB_BONUS) $(LIBFT) -o $(NAME_BONUS)
 
 
 clean:
 	@rm -f $(OBJS) $(OBJS_BONUS)
 	@make clean -C ./libft
+	@rm -rf $(OBJS_PATH)
+
 
 fclean: clean
 	@rm -f $(NAME) $(NAME_BONUS)
 	@make fclean -C ./libft
+	@rm -rf $(OBJS_PATH)
 
 re: fclean all
 

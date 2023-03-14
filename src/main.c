@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/09 19:27:06 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/13 12:40:19 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ void	first_son(int *xtr, char *argv[], char *env[])
 			exit(EXIT_FAILURE);
 		close(xtr[0]);
 		dup2(xtr[1], STDOUT_FILENO);
-		// close(xtr[1]);
+		close(xtr[1]);
 		dup2(file1, STDIN_FILENO);
-		// close(file1);
+		close(file1);
 		if (exec_cmd(command1, env) == 0)
 		{
 			ft_putstr_fd("command not found\n", STDERR_FILENO);
@@ -58,9 +58,9 @@ void	last_son(int *xtr, char *argv[], char *env[])
 			exit(EXIT_FAILURE);
 		close(xtr[1]);
 		dup2(xtr[0], STDIN_FILENO);
-		// close(xtr[0]);
+		close(xtr[0]);
 		dup2(file2, STDOUT_FILENO);
-		// close(file2);
+		close(file2);
 		if (exec_cmd(command2, env) == 0)
 		{
 			ft_putstr_fd("command not found\n", STDERR_FILENO);
