@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 12:57:17 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/10 15:28:09 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:50:18 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ char	*find_path(char *cmd, char **env)
 	return (0);
 }
 
-int	exec_cmd(char *cmd, char **env) //cmd es argv[2] y argv[3]
+int	exec_cmd(char *cmd, char **env) //cmd es argv[2] o argv[3]
 {
 	char	**cmd_flags;
 	char	*path;
