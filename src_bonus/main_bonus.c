@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/15 17:43:50 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/16 15:12:56 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	first_son(char *argv[])
 {
 	int		file1;
-	// char	*command1;
 
 	file1 = open(argv[1], O_RDONLY, 0644);
 	if (file1 < 0)
@@ -24,15 +23,17 @@ void	first_son(char *argv[])
 	close(file1);
 }
 
-
-/* void	last_son(int argc, char *argv[], char *env[])
+void	last_son(int argc, char *argv[], char *env[])
 {
+	int		file2;
 
+	file2 = open(argv[argc - 1], O_RDWR | O_CREAT | O_TRUNC, 0644);
+	if (file2 < 0)
+		exit(EXIT_FAILURE);
 	dup2(file2, STDOUT_FILENO);
-	// close(file2);
+	close(file2);
 	exec_cmd(argv[argc - 2], env);
-} */
-
+}
 
 void	bonus_son(char *cmd, char *env[])
 {
@@ -48,19 +49,19 @@ void	bonus_son(char *cmd, char *env[])
 		exit(EXIT_FAILURE);
 	if (id == 0)
 	{
+		dup2(xtr[1], STDOUT_FILENO);
 		close(xtr[1]);
-		dup2(xtr[0], STDIN_FILENO);
 		exec_cmd(cmd, env);
 	}
 	else
 	{
-		close(xtr[0]);
-		dup2(xtr[1], STDOUT_FILENO);
-		// close(xtr[1]);
+		close(xtr[1]);
+		dup2(xtr[0], STDIN_FILENO);
 		waitpid(id, 0, 0);
 	}
+	close(xtr[1]);
+	close(xtr[0]);
 }
-
 
 /* pid_t data type stands for process identification and it is used to represent
 process ids.  Whenever, we want to declare a variable that is going to be deal 
@@ -69,33 +70,13 @@ signed integer type (signed int or we can say int). */
 
 void	pipex(int argc, char *argv[], char *env[])
 {
-	// int		status;
 	int		i;
 
 	i = 2;
-
 	first_son(argv);
-
-	
-	int		file2;
-
-	file2 = open(argv[argc - 1], O_RDWR | O_CREAT | O_TRUNC, 0644);
-	if (file2 < 0)
-		exit(EXIT_FAILURE);
-	// ft_putstr_fd("llega", 1);
-
-	
 	while (i < argc - 2)
 		bonus_son(argv[i++], env);
-	dup2(file2, STDOUT_FILENO);
-	// close(file2);
-	exec_cmd(argv[argc - 2], env);
-	// last_son(argc, argv, env);
-	
-/* 	close(xtr[0]);
-	close(xtr[1]); */
-/* 	waitpid(-1, &status, 0);
-	waitpid(-1, &status, 0); */
+	last_son(argc, argv, env);
 }
 
 int	main(int argc, char *argv[], char *env[])

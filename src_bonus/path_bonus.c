@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 12:57:17 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/10 13:21:25 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/16 13:27:31 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	*find_path(char *cmd, char **env)
 		free(slash_cmd);
 		if (access(path, X_OK) == 0)
 		{
-			free_mtx(all_dir);
+			//free_mtx(all_dir);
 			return (path);
 		}
 		free(path);
