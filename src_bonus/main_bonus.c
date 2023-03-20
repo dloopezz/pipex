@@ -6,13 +6,13 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/16 15:12:56 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/20 19:23:48 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-void	first_son(char *argv[])
+int	ft_infile(char **argv)
 {
 	int		file1;
 
@@ -21,18 +21,24 @@ void	first_son(char *argv[])
 		exit(EXIT_FAILURE);
 	dup2(file1, STDIN_FILENO);
 	close(file1);
+	return (file1);
 }
 
-void	last_son(int argc, char *argv[], char *env[])
+int	ft_outfile(int argc, char *argv[], int check)
 {
 	int		file2;
 
-	file2 = open(argv[argc - 1], O_RDWR | O_CREAT | O_TRUNC, 0644);
+	file2 = 0;
+	if (check == DEFAULT)
+		file2 = open(argv[argc - 1], O_RDWR | O_CREAT | O_TRUNC, 0644);
+	else if (check == HERE_DOC)
+		file2 = open(argv[argc - 1], O_RDWR | O_CREAT | O_APPEND, 0644);
 	if (file2 < 0)
-		exit(EXIT_FAILURE);
-	dup2(file2, STDOUT_FILENO);
-	close(file2);
-	exec_cmd(argv[argc - 2], env);
+			exit(EXIT_FAILURE);
+	// dup2(file2, STDOUT_FILENO);
+	// close(file2);
+	// exec_cmd(argv[argc - 2], env);
+	return (file2);
 }
 
 void	bonus_son(char *cmd, char *env[])
@@ -58,25 +64,66 @@ void	bonus_son(char *cmd, char *env[])
 		close(xtr[1]);
 		dup2(xtr[0], STDIN_FILENO);
 		waitpid(id, 0, 0);
-	}
+	}	
 	close(xtr[1]);
 	close(xtr[0]);
 }
 
-/* pid_t data type stands for process identification and it is used to represent
-process ids.  Whenever, we want to declare a variable that is going to be deal 
-with the process ids we can use pid_t data type. The type of pid_t data is a 
-signed integer type (signed int or we can say int). */
+void ft_here_doc(char *lim)
+{
+	pid_t	doc;
+	int		end[2];
+	char	*line;
+
+	if (pipe(end) == -1)
+		exit(EXIT_FAILURE);
+	doc = fork();
+	if (doc < 0)
+		exit(EXIT_FAILURE);
+	if (doc == 0)
+	{
+		while (get_next_line(end[1]))   //arreglar gnl
+		{
+			close(end[0]);
+			if (ft_strncmp(line, lim, ft_strlen(lim)) == 0)
+				exit(EXIT_SUCCESS);
+			write(end[1], line, ft_strlen(line));
+		}
+	}
+	else
+	{
+		close(end[1]);
+		dup2(end[0], STDIN_FILENO);
+		// close(end[0]);
+		wait(NULL);
+	}
+
+}
 
 void	pipex(int argc, char *argv[], char *env[])
 {
-	int		i;
-
-	i = 2;
-	first_son(argv);
+	int	file1;
+	int	file2;
+	int	i;
+	
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	{
+		i = 3;
+		file2 = ft_outfile(argc, argv, HERE_DOC);
+		ft_here_doc(argv[2]);
+	}
+	else
+	{
+		i = 2;
+		file1 = ft_infile(argv);
+		file2 = ft_outfile(argc, argv, DEFAULT);
+	}
 	while (i < argc - 2)
 		bonus_son(argv[i++], env);
-	last_son(argc, argv, env);
+	// last_son(argc, argv, env);
+	dup2(file2, STDOUT_FILENO);
+	close(file2);
+	exec_cmd(argv[argc - 2], env);
 }
 
 int	main(int argc, char *argv[], char *env[])
@@ -84,7 +131,6 @@ int	main(int argc, char *argv[], char *env[])
 	if (argc >= 5)
 	{
 		//find_path_pos(env);
-		// ft_putstr_fd("llega", 2);
 		pipex(argc, argv, env);
 		return (0);
 	}
