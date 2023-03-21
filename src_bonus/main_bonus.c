@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/20 19:23:48 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/21 16:40:22 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,20 @@ void	bonus_son(char *cmd, char *env[])
 	close(xtr[0]);
 }
 
+
+void	here_doc_loop(int *end, char *line, char *lim)
+{
+	while (line)
+	{
+		close(end[0]);
+		if (ft_strncmp(line, lim, ft_strlen(lim)) == 0)
+			exit(EXIT_SUCCESS);
+		write(1, "pipe heredoc> ", 14);
+		write(end[1], line, ft_strlen(line));
+		line = get_next_line(STDIN_FILENO);
+	}
+}
+
 void ft_here_doc(char *lim)
 {
 	pid_t	doc;
@@ -82,13 +96,9 @@ void ft_here_doc(char *lim)
 		exit(EXIT_FAILURE);
 	if (doc == 0)
 	{
-		while (get_next_line(end[1]))   //arreglar gnl
-		{
-			close(end[0]);
-			if (ft_strncmp(line, lim, ft_strlen(lim)) == 0)
-				exit(EXIT_SUCCESS);
-			write(end[1], line, ft_strlen(line));
-		}
+		write(1, "pipe heredoc> ", 14);
+		line = get_next_line(STDIN_FILENO);
+		here_doc_loop(end, line, lim);
 	}
 	else
 	{
@@ -97,7 +107,6 @@ void ft_here_doc(char *lim)
 		// close(end[0]);
 		wait(NULL);
 	}
-
 }
 
 void	pipex(int argc, char *argv[], char *env[])
