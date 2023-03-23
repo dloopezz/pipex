@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 17:31:32 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/22 17:43:47 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/23 16:29:13 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,28 @@
 void	bonus_son(char *cmd, char *env[])
 {
 	pid_t	id;
-	int		xtr[2];
+	int		end[2];
 
-	pipe(xtr);
-	if (xtr < 0)
+	pipe(end);
+	if (end < 0)
 		exit (EXIT_FAILURE);
 	id = fork();
 	if (id < 0)
 		exit(EXIT_FAILURE);
 	if (id == 0)
 	{
-		dup2(xtr[1], STDOUT_FILENO);
-		close(xtr[1]);
+		dup2(end[1], STDOUT_FILENO);
+		close(end[1]);
 		exec_cmd(cmd, env);
 	}
 	else
 	{
-		close(xtr[1]);
-		dup2(xtr[0], STDIN_FILENO);
+		close(end[1]);
+		dup2(end[0], STDIN_FILENO);
 		waitpid(id, 0, 0);
 	}	
-	close(xtr[1]);
-	close(xtr[0]);
+	close(end[1]);
+	close(end[0]);
 }
 
 void	here_doc_loop(int *end, char *line, char *lim)
@@ -112,5 +112,8 @@ int	main(int argc, char *argv[], char *env[])
 	if (argc >= 5)
 		pipex(argc, argv, env);
 	else
+	{
+		error_found("|invalid arguments| ");
 		return (1);
+	}
 }

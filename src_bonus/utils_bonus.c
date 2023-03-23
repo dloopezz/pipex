@@ -6,7 +6,7 @@
 /*   By: dlopez-s <dlopez-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 16:19:42 by dlopez-s          #+#    #+#             */
-/*   Updated: 2023/03/22 16:51:45 by dlopez-s         ###   ########.fr       */
+/*   Updated: 2023/03/23 16:26:43 by dlopez-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	free_mtx(char **mtx)
 	int	i;
 
 	i = 0;
-	while (mtx[i++])
-		free(mtx[i]);
+	while (mtx[i])
+		free(mtx[i++]);
 	free(mtx);
 }
 
@@ -36,21 +36,21 @@ int	ft_open(char *file, int check)
 	{
 		fd = open(file, O_RDONLY, 0644);
 		if (access(file, R_OK) < 0)
-			error_found("permission denied");
+			error_found("|failed to open file| ");
 	}
 	if (check == OUTFILE)
 	{
 		fd = open(file, O_RDWR | O_CREAT | O_TRUNC, 0644);
 		if (access(file, W_OK | R_OK) < 0)
-			error_found("permission denied");
+			error_found("|failed to open file| ");
 	}
 	if (check == HERE_DOC)
 	{
 		fd = open(file, O_RDWR | O_CREAT | O_APPEND, 0644);
 		if (access(file, W_OK | R_OK) < 0)
-			error_found("permission denied");
+			error_found("|failed to open file| ");
 	}
 	if (fd < 0)
-		error_found("no such file or directory");
+		error_found("|failed to open file| ");
 	return (fd);
 }
